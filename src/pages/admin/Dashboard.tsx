@@ -11,17 +11,20 @@ import {
   PlusCircle,
   Search,
   BarChart3,
-  Settings
+  Settings,
+  KeyRound
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import ResetPasswordDialog from "@/components/admin/ResetPasswordDialog";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
+  const [showResetPassword, setShowResetPassword] = useState(false);
   const [stats, setStats] = useState({
     totalCompanies: 0,
     activeCompanies: 0,
@@ -143,15 +146,26 @@ const AdminDashboard = () => {
               />
             </div>
           </div>
-          <Button
-            onClick={handleLogout}
-            variant="ghost"
-            size="sm"
-            id="btn-admin-logout"
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            Sair
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => setShowResetPassword(true)}
+              variant="outline"
+              size="sm"
+              id="btn-open-reset-password"
+            >
+              <KeyRound className="h-4 w-4 mr-2" />
+              Resetar Senha
+            </Button>
+            <Button
+              onClick={handleLogout}
+              variant="ghost"
+              size="sm"
+              id="btn-admin-logout"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Sair
+            </Button>
+          </div>
         </header>
 
         {/* Main Content */}
@@ -273,6 +287,12 @@ const AdminDashboard = () => {
           </div>
         </main>
       </div>
+
+      <ResetPasswordDialog
+        open={showResetPassword}
+        onOpenChange={setShowResetPassword}
+        email="jefson.ti@gmail.com"
+      />
     </div>
   );
 };
