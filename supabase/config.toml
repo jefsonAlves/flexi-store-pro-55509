@@ -1,1 +1,4 @@
 project_id = "xlqpezkxmlognhmwqlhp"
+
+[functions.emergency-reset-password]
+verify_jwt = false

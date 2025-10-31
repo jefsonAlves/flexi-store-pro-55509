@@ -18,7 +18,7 @@ const AdminEmergencyReset = () => {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke("reset-user-password", {
+      const { data, error } = await supabase.functions.invoke("emergency-reset-password", {
         body: { email, password },
       });
 
