@@ -45,8 +45,8 @@ const CreateCompanyDialog = ({ open, onOpenChange, onSuccess }: CreateCompanyDia
 
     try {
       // Validate domain is unique
-      const { data: existingDomain } = await supabase
-        .from("tenants")
+      const { data: existingDomain } = await (supabase
+        .from("tenants") as any)
         .select("id")
         .eq("domain", formData.domain)
         .maybeSingle();
@@ -61,8 +61,8 @@ const CreateCompanyDialog = ({ open, onOpenChange, onSuccess }: CreateCompanyDia
       }
 
       // Create tenant
-      const { error } = await supabase
-        .from("tenants")
+      const { error } = await (supabase
+        .from("tenants") as any)
         .insert({
           name: formData.name,
           cnpj: formData.cnpj,

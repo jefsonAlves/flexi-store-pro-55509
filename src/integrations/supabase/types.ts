@@ -14,7 +14,417 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          details: Json | null
+          id: number
+          resource: string
+          tenant_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: number
+          resource: string
+          tenant_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: number
+          resource?: string
+          tenant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clients: {
+        Row: {
+          cpf: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          tenant_id: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          cpf?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          tenant_id: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          cpf?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          tenant_id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clients_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      drivers: {
+        Row: {
+          cpf: string | null
+          created_at: string
+          id: string
+          name: string
+          phone: string | null
+          photo_url: string | null
+          plate: string | null
+          status: Database["public"]["Enums"]["driver_status"]
+          tenant_id: string
+          updated_at: string
+          user_id: string | null
+          vehicle: Database["public"]["Enums"]["vehicle_type"] | null
+        }
+        Insert: {
+          cpf?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          phone?: string | null
+          photo_url?: string | null
+          plate?: string | null
+          status?: Database["public"]["Enums"]["driver_status"]
+          tenant_id: string
+          updated_at?: string
+          user_id?: string | null
+          vehicle?: Database["public"]["Enums"]["vehicle_type"] | null
+        }
+        Update: {
+          cpf?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string | null
+          photo_url?: string | null
+          plate?: string | null
+          status?: Database["public"]["Enums"]["driver_status"]
+          tenant_id?: string
+          updated_at?: string
+          user_id?: string | null
+          vehicle?: Database["public"]["Enums"]["vehicle_type"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "drivers_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          order_id: string
+          product_id: string | null
+          quantity: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          order_id: string
+          product_id?: string | null
+          quantity: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          order_id?: string
+          product_id?: string | null
+          quantity?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          accepted_at: string | null
+          address: Json
+          assigned_driver: string | null
+          at_door_at: string | null
+          cancel_reason: string | null
+          change_for: number | null
+          client_id: string
+          created_at: string
+          delivered_at: string | null
+          eta_minutes: number | null
+          id: string
+          on_way_at: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          preparing_at: string | null
+          status: Database["public"]["Enums"]["order_status"]
+          tenant_id: string
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          address: Json
+          assigned_driver?: string | null
+          at_door_at?: string | null
+          cancel_reason?: string | null
+          change_for?: number | null
+          client_id: string
+          created_at?: string
+          delivered_at?: string | null
+          eta_minutes?: number | null
+          id?: string
+          on_way_at?: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          preparing_at?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          tenant_id: string
+          total: number
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          address?: Json
+          assigned_driver?: string | null
+          at_door_at?: string | null
+          cancel_reason?: string | null
+          change_for?: number | null
+          client_id?: string
+          created_at?: string
+          delivered_at?: string | null
+          eta_minutes?: number | null
+          id?: string
+          on_way_at?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          preparing_at?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          tenant_id?: string
+          total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_assigned_driver_fkey"
+            columns: ["assigned_driver"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          active: boolean
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          images: string[] | null
+          name: string
+          prepare_time_minutes: number
+          price: number
+          stock: number
+          tenant_id: string
+          type: Database["public"]["Enums"]["product_type"]
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          name: string
+          prepare_time_minutes?: number
+          price: number
+          stock?: number
+          tenant_id: string
+          type?: Database["public"]["Enums"]["product_type"]
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          name?: string
+          prepare_time_minutes?: number
+          price?: number
+          stock?: number
+          tenant_id?: string
+          type?: Database["public"]["Enums"]["product_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          cpf: string | null
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          phone: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          tenant_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          cpf?: string | null
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          tenant_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cpf?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          tenant_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tenants: {
+        Row: {
+          banner_urls: string[] | null
+          cnpj: string | null
+          created_at: string
+          domain: string | null
+          email: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          phone: string | null
+          plan: string | null
+          primary_color: string | null
+          secondary_color: string | null
+          status: Database["public"]["Enums"]["tenant_status"]
+          updated_at: string
+        }
+        Insert: {
+          banner_urls?: string[] | null
+          cnpj?: string | null
+          created_at?: string
+          domain?: string | null
+          email?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          phone?: string | null
+          plan?: string | null
+          primary_color?: string | null
+          secondary_color?: string | null
+          status?: Database["public"]["Enums"]["tenant_status"]
+          updated_at?: string
+        }
+        Update: {
+          banner_urls?: string[] | null
+          cnpj?: string | null
+          created_at?: string
+          domain?: string | null
+          email?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          phone?: string | null
+          plan?: string | null
+          primary_color?: string | null
+          secondary_color?: string | null
+          status?: Database["public"]["Enums"]["tenant_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +433,21 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin_master" | "company_admin" | "driver" | "client"
+      driver_status: "INACTIVE" | "ACTIVE" | "ONLINE" | "IN_SERVICE"
+      order_status:
+        | "PENDENTE"
+        | "ACEITO"
+        | "EM_PREPARO"
+        | "A_CAMINHO"
+        | "NA_PORTA"
+        | "ENTREGUE"
+        | "CANCELADO"
+      payment_method: "PIX" | "CARD" | "CASH"
+      payment_status: "PENDING" | "PAID" | "FAILED"
+      product_type: "product" | "service"
+      tenant_status: "ACTIVE" | "SUSPENDED"
+      vehicle_type: "MOTO" | "CARRO" | "BICICLETA" | "A_PE"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +574,23 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin_master", "company_admin", "driver", "client"],
+      driver_status: ["INACTIVE", "ACTIVE", "ONLINE", "IN_SERVICE"],
+      order_status: [
+        "PENDENTE",
+        "ACEITO",
+        "EM_PREPARO",
+        "A_CAMINHO",
+        "NA_PORTA",
+        "ENTREGUE",
+        "CANCELADO",
+      ],
+      payment_method: ["PIX", "CARD", "CASH"],
+      payment_status: ["PENDING", "PAID", "FAILED"],
+      product_type: ["product", "service"],
+      tenant_status: ["ACTIVE", "SUSPENDED"],
+      vehicle_type: ["MOTO", "CARRO", "BICICLETA", "A_PE"],
+    },
   },
 } as const

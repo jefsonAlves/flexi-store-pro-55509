@@ -46,8 +46,8 @@ const AdminDashboard = () => {
         return;
       }
 
-      const { data: profile } = await supabase
-        .from("profiles")
+      const { data: profile } = await (supabase
+        .from("profiles") as any)
         .select("role")
         .eq("id", session.user.id)
         .single();
@@ -66,35 +66,35 @@ const AdminDashboard = () => {
   const loadStats = async () => {
     try {
       // Get total and active companies
-      const { data: companies } = await supabase
-        .from("tenants")
+      const { data: companies } = await (supabase
+        .from("tenants") as any)
         .select("id, status");
 
       const totalCompanies = companies?.length || 0;
-      const activeCompanies = companies?.filter(c => c.status === "ACTIVE").length || 0;
+      const activeCompanies = companies?.filter((c: any) => c.status === "ACTIVE").length || 0;
 
       // Get total clients
-      const { count: totalClients } = await supabase
-        .from("clients")
+      const { count: totalClients } = await (supabase
+        .from("clients") as any)
         .select("*", { count: "exact", head: true });
 
       // Get orders today
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const { count: ordersToday } = await supabase
-        .from("orders")
+      const { count: ordersToday } = await (supabase
+        .from("orders") as any)
         .select("*", { count: "exact", head: true })
         .gte("created_at", today.toISOString());
 
       // Get monthly revenue
       const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-      const { data: orders } = await supabase
-        .from("orders")
+      const { data: orders } = await (supabase
+        .from("orders") as any)
         .select("total")
         .gte("created_at", firstDayOfMonth.toISOString())
         .eq("payment_status", "PAID");
 
-      const monthlyRevenue = orders?.reduce((sum, order) => sum + Number(order.total), 0) || 0;
+      const monthlyRevenue = orders?.reduce((sum: number, order: any) => sum + Number(order.total), 0) || 0;
 
       setStats({
         totalCompanies,

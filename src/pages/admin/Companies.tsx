@@ -56,8 +56,8 @@ const AdminCompanies = () => {
       return;
     }
 
-    const { data: profile } = await supabase
-      .from("profiles")
+    const { data: profile } = await (supabase
+      .from("profiles") as any)
       .select("role")
       .eq("id", session.user.id)
       .single();
@@ -70,8 +70,8 @@ const AdminCompanies = () => {
   const loadCompanies = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("tenants")
+      const { data, error } = await (supabase
+        .from("tenants") as any)
         .select("*")
         .order("created_at", { ascending: false });
 
@@ -110,8 +110,8 @@ const AdminCompanies = () => {
     const newStatus = currentStatus === "ACTIVE" ? "SUSPENDED" : "ACTIVE";
     
     try {
-      const { error } = await supabase
-        .from("tenants")
+      const { error } = await (supabase
+        .from("tenants") as any)
         .update({ status: newStatus })
         .eq("id", id);
 

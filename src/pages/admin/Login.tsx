@@ -29,15 +29,15 @@ const AdminLogin = () => {
       if (error) throw error;
 
       // Check if user is admin_master
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
+      const { data: profile, error: profileError } = await (supabase
+        .from("profiles") as any)
         .select("role")
         .eq("id", data.user.id)
         .single();
 
       if (profileError) throw profileError;
 
-      if (profile.role !== "admin_master") {
+      if (profile?.role !== "admin_master") {
         await supabase.auth.signOut();
         toast({
           title: "Acesso negado",
