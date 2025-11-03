@@ -3,12 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Package, Users, Truck, LogOut, BarChart3 } from "lucide-react";
+import { Package, LogOut, Truck, Users, BarChart3 } from "lucide-react";
+import { ProductList } from "@/components/company/ProductList";
+import { DriversList } from "@/components/company/DriversList";
 
 const CompanyDashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
+  const [tenantId, setTenantId] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,6 +29,18 @@ const CompanyDashboard = () => {
       }
 
       setUser(session.user);
+
+      // Buscar tenant_id do perfil
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("tenant_id")
+        .eq("id", session.user.id)
+        .single();
+
+      if (profileError) throw profileError;
+      if (profileData?.tenant_id) {
+        setTenantId(profileData.tenant_id);
+      }
     } catch (error) {
       console.error("Erro ao verificar autenticação:", error);
       navigate("/auth/login");
@@ -62,61 +78,53 @@ const CompanyDashboard = () => {
 
       {/* CONTEÚDO */}
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto space-y-6">
-          <Card className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Bem-vindo, Empresa!</h2>
-            <p className="text-muted-foreground mb-6">
-              Gerencie seus produtos, pedidos e entregadores em um só lugar.
-            </p>
+        <div className="max-w-7xl mx-auto">
+          <Tabs defaultValue="produtos" className="w-full">
+            <TabsList className="grid w-full grid-cols-4 mb-8">
+              <TabsTrigger value="produtos">
+                <Package className="h-4 w-4 mr-2" />
+                Produtos
+              </TabsTrigger>
+              <TabsTrigger value="motoristas">
+                <Truck className="h-4 w-4 mr-2" />
+                Motoristas
+              </TabsTrigger>
+              <TabsTrigger value="pedidos">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Pedidos
+              </TabsTrigger>
+              <TabsTrigger value="relatorios">
+                <Users className="h-4 w-4 mr-2" />
+                Relatórios
+              </TabsTrigger>
+            </TabsList>
 
-            <div className="grid md:grid-cols-4 gap-4">
-              <Card className="p-4 text-center hover:shadow-lg transition-smooth">
-                <Package className="h-8 w-8 text-primary mx-auto mb-2" />
-                <p className="text-sm font-medium">Produtos</p>
-                <p className="text-2xl font-bold">0</p>
+            <TabsContent value="produtos">
+              {tenantId && <ProductList tenantId={tenantId} />}
+            </TabsContent>
+
+            <TabsContent value="motoristas">
+              {tenantId && <DriversList tenantId={tenantId} />}
+            </TabsContent>
+
+            <TabsContent value="pedidos">
+              <Card className="p-6">
+                <h2 className="text-2xl font-bold mb-4">Pedidos</h2>
+                <p className="text-muted-foreground">
+                  Funcionalidade de gestão de pedidos em desenvolvimento.
+                </p>
               </Card>
+            </TabsContent>
 
-              <Card className="p-4 text-center hover:shadow-lg transition-smooth">
-                <BarChart3 className="h-8 w-8 text-accent mx-auto mb-2" />
-                <p className="text-sm font-medium">Pedidos Hoje</p>
-                <p className="text-2xl font-bold">0</p>
+            <TabsContent value="relatorios">
+              <Card className="p-6">
+                <h2 className="text-2xl font-bold mb-4">Relatórios</h2>
+                <p className="text-muted-foreground">
+                  Funcionalidade de relatórios em desenvolvimento.
+                </p>
               </Card>
-
-              <Card className="p-4 text-center hover:shadow-lg transition-smooth">
-                <Truck className="h-8 w-8 text-secondary mx-auto mb-2" />
-                <p className="text-sm font-medium">Entregadores</p>
-                <p className="text-2xl font-bold">0</p>
-              </Card>
-
-              <Card className="p-4 text-center hover:shadow-lg transition-smooth">
-                <Users className="h-8 w-8 text-primary mx-auto mb-2" />
-                <p className="text-sm font-medium">Clientes</p>
-                <p className="text-2xl font-bold">0</p>
-              </Card>
-            </div>
-          </Card>
-
-          <Card className="p-6">
-            <h3 className="font-semibold mb-4">Funcionalidades em Desenvolvimento</h3>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="p-4 border rounded-lg">
-                <h4 className="font-medium mb-2">📦 Gestão de Produtos</h4>
-                <p className="text-sm text-muted-foreground">Cadastre água e gás com preços e estoque</p>
-              </div>
-              <div className="p-4 border rounded-lg">
-                <h4 className="font-medium mb-2">📋 Pedidos</h4>
-                <p className="text-sm text-muted-foreground">Visualize e gerencie pedidos em tempo real</p>
-              </div>
-              <div className="p-4 border rounded-lg">
-                <h4 className="font-medium mb-2">🚚 Entregadores</h4>
-                <p className="text-sm text-muted-foreground">Cadastre e monitore sua equipe</p>
-              </div>
-              <div className="p-4 border rounded-lg">
-                <h4 className="font-medium mb-2">📊 Relatórios</h4>
-                <p className="text-sm text-muted-foreground">Analise o desempenho do seu negócio</p>
-              </div>
-            </div>
-          </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>

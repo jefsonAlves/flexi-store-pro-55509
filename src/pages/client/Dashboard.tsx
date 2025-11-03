@@ -2,14 +2,19 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Package, MapPin, Clock, LogOut } from "lucide-react";
+import { Package, LogOut, User } from "lucide-react";
+import { NewOrderDialog } from "@/components/client/NewOrderDialog";
+import { ProfileForm } from "@/components/client/ProfileForm";
 
 const ClientDashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
+  const [clientId, setClientId] = useState<string>("");
+  const [tenantId, setTenantId] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [orderDialogOpen, setOrderDialogOpen] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -25,6 +30,19 @@ const ClientDashboard = () => {
       }
 
       setUser(session.user);
+
+      // Buscar dados do cliente
+      const { data: clientData, error: clientError } = await supabase
+        .from("clients")
+        .select("id, tenant_id")
+        .eq("user_id", session.user.id)
+        .single();
+
+      if (clientError) throw clientError;
+      if (clientData) {
+        setClientId(clientData.id);
+        setTenantId(clientData.tenant_id);
+      }
     } catch (error) {
       console.error("Erro ao verificar autenticação:", error);
       navigate("/auth/login");
@@ -62,33 +80,49 @@ const ClientDashboard = () => {
 
       {/* CONTEÚDO */}
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-6">
-          <Card className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Bem-vindo, Cliente!</h2>
-            <p className="text-muted-foreground mb-6">
-              Seu dashboard está em construção. Em breve você poderá fazer pedidos e acompanhá-los em tempo real.
-            </p>
+        <div className="max-w-5xl mx-auto">
+          <Tabs defaultValue="pedidos" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-8">
+              <TabsTrigger value="pedidos">
+                <Package className="h-4 w-4 mr-2" />
+                Fazer Pedido
+              </TabsTrigger>
+              <TabsTrigger value="perfil">
+                <User className="h-4 w-4 mr-2" />
+                Meu Perfil
+              </TabsTrigger>
+            </TabsList>
 
-            <div className="grid md:grid-cols-3 gap-4">
-              <Card className="p-4 text-center">
-                <Package className="h-8 w-8 text-primary mx-auto mb-2" />
-                <p className="text-sm font-medium">Fazer Pedido</p>
-                <p className="text-xs text-muted-foreground">Em breve</p>
-              </Card>
+            <TabsContent value="pedidos">
+              <div className="text-center py-12">
+                <Package className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+                <h2 className="text-2xl font-bold mb-4">Fazer Pedido</h2>
+                <p className="text-muted-foreground mb-6">
+                  Clique no botão abaixo para criar um novo pedido
+                </p>
+                <Button size="lg" onClick={() => setOrderDialogOpen(true)}>
+                  <Package className="h-5 w-5 mr-2" />
+                  Novo Pedido
+                </Button>
+              </div>
+            </TabsContent>
 
-              <Card className="p-4 text-center">
-                <MapPin className="h-8 w-8 text-primary mx-auto mb-2" />
-                <p className="text-sm font-medium">Rastrear Entrega</p>
-                <p className="text-xs text-muted-foreground">Em breve</p>
-              </Card>
+            <TabsContent value="perfil">
+              {user && <ProfileForm userId={user.id} />}
+            </TabsContent>
+          </Tabs>
 
-              <Card className="p-4 text-center">
-                <Clock className="h-8 w-8 text-primary mx-auto mb-2" />
-                <p className="text-sm font-medium">Histórico</p>
-                <p className="text-xs text-muted-foreground">Em breve</p>
-              </Card>
-            </div>
-          </Card>
+          {clientId && tenantId && (
+            <NewOrderDialog
+              open={orderDialogOpen}
+              onOpenChange={setOrderDialogOpen}
+              clientId={clientId}
+              tenantId={tenantId}
+              onSuccess={() => {
+                toast.success("Pedido criado com sucesso!");
+              }}
+            />
+          )}
         </div>
       </div>
     </div>
