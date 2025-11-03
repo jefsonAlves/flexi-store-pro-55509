@@ -54,6 +54,7 @@ export type Database = {
       }
       clients: {
         Row: {
+          address: Json | null
           cpf: string | null
           created_at: string
           email: string | null
@@ -65,6 +66,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          address?: Json | null
           cpf?: string | null
           created_at?: string
           email?: string | null
@@ -76,6 +78,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          address?: Json | null
           cpf?: string | null
           created_at?: string
           email?: string | null
@@ -89,6 +92,48 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "clients_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      driver_sessions: {
+        Row: {
+          created_at: string
+          driver_id: string
+          ended_at: string | null
+          id: string
+          started_at: string
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string
+          driver_id: string
+          ended_at?: string | null
+          id?: string
+          started_at?: string
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string
+          driver_id?: string
+          ended_at?: string | null
+          id?: string
+          started_at?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_sessions_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "driver_sessions_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "tenants"
