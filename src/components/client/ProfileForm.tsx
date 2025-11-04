@@ -85,7 +85,11 @@ export const ProfileForm = ({ userId }: ProfileFormProps) => {
           <Input
             id="cpf"
             value={formData.cpf}
-            onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
+            onChange={(e) => {
+              const { maskCPF } = require("@/lib/validators");
+              setFormData({ ...formData, cpf: maskCPF(e.target.value) });
+            }}
+            maxLength={14}
           />
         </div>
 
@@ -94,7 +98,11 @@ export const ProfileForm = ({ userId }: ProfileFormProps) => {
           <Input
             id="phone"
             value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            onChange={(e) => {
+              const { maskPhone } = require("@/lib/validators");
+              setFormData({ ...formData, phone: maskPhone(e.target.value) });
+            }}
+            maxLength={15}
           />
         </div>
 

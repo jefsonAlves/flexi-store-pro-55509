@@ -8,6 +8,9 @@ import { toast } from "sonner";
 import { Package, LogOut, Truck, Users, BarChart3 } from "lucide-react";
 import { ProductList } from "@/components/company/ProductList";
 import { DriversList } from "@/components/company/DriversList";
+import { OrdersManagement } from "@/components/company/OrdersManagement";
+import { DriverSessionsReport } from "@/components/company/DriverSessionsReport";
+import { RevenueReport } from "@/components/company/RevenueReport";
 
 const CompanyDashboard = () => {
   const navigate = useNavigate();

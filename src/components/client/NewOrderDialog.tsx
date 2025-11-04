@@ -278,7 +278,26 @@ export const NewOrderDialog = ({ open, onOpenChange, clientId, tenantId, onSucce
               <Input
                 placeholder="CEP"
                 value={address.zipCode}
-                onChange={(e) => setAddress({ ...address, zipCode: e.target.value })}
+                onChange={async (e) => {
+                  const cep = e.target.value;
+                  setAddress({ ...address, zipCode: cep });
+                  
+                  if (cep.replace(/\D/g, '').length === 8) {
+                    const { fetchAddressFromCEP } = await import("@/lib/geocoding");
+                    const data = await fetchAddressFromCEP(cep);
+                    if (data) {
+                      setAddress({
+                        ...address,
+                        zipCode: cep,
+                        street: data.logradouro,
+                        neighborhood: data.bairro,
+                        city: data.localidade,
+                        state: data.uf,
+                      });
+                      toast.success("Endereço preenchido automaticamente!");
+                    }
+                  }
+                }}
               />
             </div>
           </div>

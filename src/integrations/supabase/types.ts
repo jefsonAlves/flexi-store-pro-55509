@@ -52,6 +52,41 @@ export type Database = {
           },
         ]
       }
+      billing_configs: {
+        Row: {
+          active: boolean | null
+          billing_type: string
+          created_at: string | null
+          id: string
+          tenant_id: string
+          value: number
+        }
+        Insert: {
+          active?: boolean | null
+          billing_type: string
+          created_at?: string | null
+          id?: string
+          tenant_id: string
+          value: number
+        }
+        Update: {
+          active?: boolean | null
+          billing_type?: string
+          created_at?: string | null
+          id?: string
+          tenant_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "billing_configs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           address: Json | null
@@ -252,6 +287,8 @@ export type Database = {
           delivered_at: string | null
           eta_minutes: number | null
           id: string
+          latitude: number | null
+          longitude: number | null
           on_way_at: string | null
           payment_method: Database["public"]["Enums"]["payment_method"]
           payment_status: Database["public"]["Enums"]["payment_status"]
@@ -273,6 +310,8 @@ export type Database = {
           delivered_at?: string | null
           eta_minutes?: number | null
           id?: string
+          latitude?: number | null
+          longitude?: number | null
           on_way_at?: string | null
           payment_method: Database["public"]["Enums"]["payment_method"]
           payment_status?: Database["public"]["Enums"]["payment_status"]
@@ -294,6 +333,8 @@ export type Database = {
           delivered_at?: string | null
           eta_minutes?: number | null
           id?: string
+          latitude?: number | null
+          longitude?: number | null
           on_way_at?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"]
           payment_status?: Database["public"]["Enums"]["payment_status"]

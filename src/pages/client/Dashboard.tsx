@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Package, LogOut, User } from "lucide-react";
 import { NewOrderDialog } from "@/components/client/NewOrderDialog";
 import { ProfileForm } from "@/components/client/ProfileForm";
+import { OrderHistory } from "@/components/client/OrderHistory";
 
 const ClientDashboard = () => {
   const navigate = useNavigate();

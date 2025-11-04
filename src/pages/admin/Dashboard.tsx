@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import ResetPasswordDialog from "@/components/admin/ResetPasswordDialog";
+import { TenantsList } from "@/components/admin/TenantsList";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
