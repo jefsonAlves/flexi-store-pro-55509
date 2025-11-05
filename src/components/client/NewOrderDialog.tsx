@@ -12,7 +12,7 @@ interface NewOrderDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   clientId: string;
-  tenantId: string;
+  tenantId?: string; // FASE 6: Opcional - cliente pode escolher empresa
   onSuccess: () => void;
 }
 
@@ -27,6 +27,11 @@ export const NewOrderDialog = ({ open, onOpenChange, clientId, tenantId, onSucce
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
+  
+  // FASE 6: Multi-tenant - lista de empresas
+  const [tenants, setTenants] = useState<any[]>([]);
+  const [selectedTenant, setSelectedTenant] = useState(tenantId || "");
+  
   const [address, setAddress] = useState({
     street: "",
     number: "",
@@ -41,22 +46,58 @@ export const NewOrderDialog = ({ open, onOpenChange, clientId, tenantId, onSucce
 
   useEffect(() => {
     if (open) {
-      fetchProducts();
+      fetchTenants();
       fetchClientAddress();
     }
-  }, [open, tenantId]);
+  }, [open]);
+
+  useEffect(() => {
+    if (selectedTenant) {
+      fetchProducts();
+    }
+  }, [selectedTenant]);
+
+  // FASE 6: Buscar empresas ativas
+  const fetchTenants = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("tenants")
+        .select("id, name")
+        .eq("status", "ACTIVE")
+        .order("name");
+
+      if (error) throw error;
+      setTenants(data || []);
+      
+      // Se tenantId foi passado, usar ele
+      if (tenantId) {
+        setSelectedTenant(tenantId);
+      } else if (data && data.length > 0) {
+        // Senão, selecionar primeira empresa
+        setSelectedTenant(data[0].id);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar empresas:", error);
+      toast.error("Erro ao carregar empresas");
+    }
+  };
 
   const fetchProducts = async () => {
+    if (!selectedTenant) return;
+    
     try {
       const { data, error } = await supabase
         .from("products")
         .select("*")
-        .eq("tenant_id", tenantId)
+        .eq("tenant_id", selectedTenant)
         .eq("active", true)
         .gt("stock", 0);
 
       if (error) throw error;
       setProducts(data || []);
+      
+      // Limpar carrinho ao trocar de empresa
+      setCart([]);
     } catch (error: any) {
       console.error("Erro ao buscar produtos:", error);
       toast.error("Erro ao carregar produtos");
@@ -118,6 +159,12 @@ export const NewOrderDialog = ({ open, onOpenChange, clientId, tenantId, onSucce
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!selectedTenant) {
+      toast.error("Selecione uma empresa");
+      return;
+    }
+    
     if (cart.length === 0) {
       toast.error("Adicione pelo menos um produto ao carrinho");
       return;
@@ -131,7 +178,7 @@ export const NewOrderDialog = ({ open, onOpenChange, clientId, tenantId, onSucce
       const { data: orderData, error: orderError } = await supabase
         .from("orders")
         .insert({
-          tenant_id: tenantId,
+          tenant_id: selectedTenant,
           client_id: clientId,
           total,
           payment_method: paymentMethod as any,
@@ -179,10 +226,32 @@ export const NewOrderDialog = ({ open, onOpenChange, clientId, tenantId, onSucce
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* FASE 6: Seleção de Empresa */}
+          {!tenantId && tenants.length > 0 && (
+            <div>
+              <Label>Selecione a Empresa *</Label>
+              <Select value={selectedTenant} onValueChange={setSelectedTenant} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Escolha uma empresa" />
+                </SelectTrigger>
+                <SelectContent>
+                  {tenants.map((tenant) => (
+                    <SelectItem key={tenant.id} value={tenant.id}>
+                      {tenant.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
           {/* Produtos */}
           <div>
             <Label>Selecione os Produtos</Label>
-            <div className="grid gap-2 mt-2">
+            {!selectedTenant && <p className="text-sm text-muted-foreground mt-2">Selecione uma empresa primeiro</p>}
+            {selectedTenant && products.length === 0 && <p className="text-sm text-muted-foreground mt-2">Nenhum produto disponível</p>}
+            {selectedTenant && products.length > 0 && (
+              <div className="grid gap-2 mt-2">
               {products.map(product => (
                 <div key={product.id} className="flex items-center justify-between p-3 border rounded-lg">
                   <div>
@@ -194,7 +263,8 @@ export const NewOrderDialog = ({ open, onOpenChange, clientId, tenantId, onSucce
                   </Button>
                 </div>
               ))}
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Carrinho */}

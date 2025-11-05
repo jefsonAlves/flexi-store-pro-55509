@@ -96,7 +96,7 @@ export type Database = {
           full_name: string | null
           id: string
           phone: string | null
-          tenant_id: string
+          tenant_id: string | null
           updated_at: string
           user_id: string | null
         }
@@ -108,7 +108,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
-          tenant_id: string
+          tenant_id?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -120,7 +120,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
-          tenant_id?: string
+          tenant_id?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -186,7 +186,7 @@ export type Database = {
           photo_url: string | null
           plate: string | null
           status: Database["public"]["Enums"]["driver_status"]
-          tenant_id: string
+          tenant_id: string | null
           updated_at: string
           user_id: string | null
           vehicle: Database["public"]["Enums"]["vehicle_type"] | null
@@ -200,7 +200,7 @@ export type Database = {
           photo_url?: string | null
           plate?: string | null
           status?: Database["public"]["Enums"]["driver_status"]
-          tenant_id: string
+          tenant_id?: string | null
           updated_at?: string
           user_id?: string | null
           vehicle?: Database["public"]["Enums"]["vehicle_type"] | null
@@ -214,7 +214,7 @@ export type Database = {
           photo_url?: string | null
           plate?: string | null
           status?: Database["public"]["Enums"]["driver_status"]
-          tenant_id?: string
+          tenant_id?: string | null
           updated_at?: string
           user_id?: string | null
           vehicle?: Database["public"]["Enums"]["vehicle_type"] | null
